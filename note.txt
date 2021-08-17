@@ -42,3 +42,6 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/az-09/lotto-combo-api.git
 git push -u origin main
+
+
+python manage.py check --deploy
