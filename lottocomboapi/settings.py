@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env()
 
-django_heroku.settings(locals())
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
+    'corsheaders',
     'django_extensions',
     'megamillions',
 
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'lottocomboapi.urls'
@@ -144,3 +146,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
 }
+
+django_heroku.settings(locals())
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
