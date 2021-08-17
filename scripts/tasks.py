@@ -1,8 +1,7 @@
 import json
 from itertools import combinations
-import time
-from datetime import datetime
 from threading import Thread
+import time
 
 import requests
 from megamillions.models import MegaMillions, WinningNumbersCombination
@@ -41,7 +40,7 @@ def winning_numbers_combinations(win_nums_list: list) -> list:
 
 def load_winning_numbers(win_nums_data: list) -> None:
     # 2013-04-30T00:00:00
- 
+
     load_data = [MegaMillions(draw_date=item[8], winning_numbers=item[9],
                               mega_ball=item[10], multiplier=item[11], number_of_draws=len(win_nums_data)) for item in win_nums_data]
     MegaMillions.objects.bulk_create(load_data)
@@ -59,7 +58,7 @@ def load_winning_numbers_combinations(win_nums_data: list) -> None:
 
     win_nums_occurs_data = [WinningNumbersCombination(winning_numbers_combination=', '.join(
         k), winning_numbers_combination_occurrence=v) for k, v in win_nums_occurs.items() if v >= 2]
-    
+
     WinningNumbersCombination.objects.bulk_create(win_nums_occurs_data)
 
 
@@ -70,13 +69,13 @@ def get_winning_numbers(url: str) -> list:
 
 
 def run() -> None:
-    Thread(delete_winning_numbers()).start()
-    Thread(delete_winning_numbers_combinations()).start()
+    while True:
+        Thread(delete_winning_numbers()).start()
+        Thread(delete_winning_numbers_combinations()).start()
 
-    # start = time.time()
+        win_nums_data = get_winning_numbers(url)
 
-    win_nums_data = get_winning_numbers(url)
-    
-    Thread(load_winning_numbers(win_nums_data)).start()
-    Thread(load_winning_numbers_combinations(win_nums_data)).start()
-    # print(time.time() - start)
+        Thread(load_winning_numbers(win_nums_data)).start()
+        Thread(load_winning_numbers_combinations(win_nums_data)).start()
+
+        time.sleep(60*60*24)

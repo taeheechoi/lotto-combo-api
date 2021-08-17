@@ -1,47 +1,96 @@
-https://www.geeksforgeeks.org/running-extra-scripts-in-django/
-pip install django-extensions
-INSTALLED_APPS = [
+- how to run script within Django
+    https://www.geeksforgeeks.org/running-extra-scripts-in-django/
+    pip install django-extensions
+    INSTALLED_APPS = [
+        ...
+        'django_extensions',
+    ]
+
+    tasks.py
+        def run():
+            ...
+
+    python manage.py runscript tasks    
+
+- how to re-migrate database
+    stop runserver
+    delete db.sqlite3
+    python manage.py makemigrations --empty megamillions
+    python manage.py makemigrations
+    python manage.py migrate
+
+- ORM
+    python manage.py shell
+    >>> from megamillions.models import MegaMillions  
+    >>> result = MegaMillions.objects.all().order_by('-draw_date')
+    >>> result 
+
+- how to use env
+
+    pip install django-environ
+    import environ
+
+    env = environ.Env()
+    # reading .env file
+    environ.Env.read_env()
+
+    SECRET_KEY = env("SECRET_KEY")
+    DEBUG = env('DEBUG') 
+
+- get with number search example
+    http://127.0.0.1:8000/api/mega-millions/winning-numbers-combinations/?page=1&numbers=2,%2036
+
+- Heroku deployment steps
+0. heroku
+    heroku login
+    heroku create lotto-combo-api
+    heroku git:remote -a lotto-combo-api
+    heroku config:set DISABLE_COLLECTSTATIC=1 DEBUG=False SECRET_KEY=""
+
+1. python manage.py check --deploy
+
+2. settings.py
     ...
-    'django_extensions',
-]
+    CSRF_COOKIE_SECURE=True
+    SESSION_COOKIE_SECURE=True
+    SECURE_SSL_REDIRECT=True
 
-load.py
-def run():
+3. pip install dj-database-url psycopg2-binary
+
+4. settings.py
     ...
+    ALLOWED_HOSTS = ['lotto-combo-api.herokuapp.com'] # app name.herokuapp.com
+    ...
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
+    ...
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+5. pip install whitenoise
 
-python manage.py makemigrations --empty megamillions
-python manage.py makemigrations
-python manage.py migrate
+6. settings.py
+    MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    ...
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+7. pip feeze > requirements.txt
 
-python manage.py runscript tasks    
+8. github
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git branch -M main
+    git remote add origin https://github.com/az-09/lotto-combo-api.git
+    git push -u origin main
 
-
->>> from megamillions.models import MegaMillions  
->>> result = MegaMillions.objects.all().order_by('-draw_date') 
-
-
-
-pip install django-environ
-import environ
-
-env = environ.Env()
-# reading .env file
-environ.Env.read_env()
-
-SECRET_KEY = env("SECRET_KEY")
-
-
-http://127.0.0.1:8000/api/mega-millions/winning-numbers-combinations/?page=1&numbers=2,%2036
-
-
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/az-09/lotto-combo-api.git
-git push -u origin main
-
-
-python manage.py check --deploy
+9. heroku
+    git push heroku main
+    heroku run python manage.py runscript tasks to add data
+    heroku open
+    
+10. schedule on heroku
+    heroku addons # to see addons     
+    
