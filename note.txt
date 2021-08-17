@@ -1,0 +1,18 @@
+https://www.geeksforgeeks.org/running-extra-scripts-in-django/
+pip install django-extensions
+INSTALLED_APPS = [
+    ...
+    'django_extensions',
+]
+
+load.py
+def run():
+    ...
+
+
+python manage.py makemigrations --empty megamillions
+python manage.py makemigrations
+python manage.py migrate
+
+
+python manage.py runscript tasks    
