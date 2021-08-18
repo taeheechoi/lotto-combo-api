@@ -88,8 +88,9 @@
     git push -u origin main
 
 9. heroku
+    heroku login
     git push heroku main
-    heroku run python manage.py runscript tasks # to add data
+    heroku run python manage.py runscript tasks
     heroku open
     
 10. schedule on heroku
