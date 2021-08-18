@@ -50,7 +50,7 @@ def load_winning_numbers(win_nums_data: list) -> None:
 
 def load_winning_numbers_combinations(win_nums_data: list) -> None:
     top_pick_numbers_length = 2 #('01, '10')
-    top_pick_min_occurrence = 12
+    top_pick_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
 
     win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
         (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
