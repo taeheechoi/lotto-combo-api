@@ -23,6 +23,6 @@ class WinningNumbersCombonationList(ListAPIView):
         quick_pick = self.request.query_params.get('quick-pick')
         if numbers is not None:
             queryset = queryset.filter(winning_numbers_combination__icontains=numbers).order_by('-winning_numbers_combination_occurrence')
-        if top_pick is not None:
+        if quick_pick is not None:
             queryset = queryset.filter(quick_pick=quick_pick).order_by('-winning_numbers_combination_occurrence')
         return queryset
