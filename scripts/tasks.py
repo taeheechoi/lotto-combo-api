@@ -2,6 +2,7 @@ import json
 from itertools import combinations
 from threading import Thread
 import time
+from typing import Tuple
 
 import requests
 from megamillions.models import MegaMillions, WinningNumbersCombination
@@ -27,15 +28,16 @@ def winning_numbers_combinations_occurrences(win_nums_combos_list: list) -> dict
     return occurrences
 
 
-def winning_numbers_combinations(win_nums_list: list) -> list:
+def winning_numbers_combinations(win_nums_list: list) -> Tuple[list, int]:
     win_nums_combos_list = []
+    number_of_draws = len(win_nums_list)
 
     for winning_numbers in win_nums_list:
         for i in range(1, len(winning_numbers)+1):
             for combo in combinations(winning_numbers, i):
                 win_nums_combos_list.append(combo)
 
-    return win_nums_combos_list
+    return win_nums_combos_list, number_of_draws
 
 
 def load_winning_numbers(win_nums_data: list) -> None:
@@ -51,13 +53,13 @@ def load_winning_numbers_combinations(win_nums_data: list) -> None:
     win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
         (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
 
-    win_nums_combos_list = winning_numbers_combinations(win_nums_list)
+    win_nums_combos_list, number_of_draws = winning_numbers_combinations(win_nums_list)
 
     win_nums_occurs = winning_numbers_combinations_occurrences(
         win_nums_combos_list)
 
     win_nums_occurs_data = [WinningNumbersCombination(winning_numbers_combination=', '.join(
-        k), winning_numbers_combination_occurrence=v) for k, v in win_nums_occurs.items() if v >= 2]
+        k), winning_numbers_combination_occurrence=v, number_of_draws=number_of_draws, possibility=v/number_of_draws*100) for k, v in win_nums_occurs.items() if v >= 2]
 
     WinningNumbersCombination.objects.bulk_create(win_nums_occurs_data)
 
@@ -69,13 +71,11 @@ def get_winning_numbers(url: str) -> list:
 
 
 def run() -> None:
-    while True:
-        Thread(delete_winning_numbers()).start()
-        Thread(delete_winning_numbers_combinations()).start()
+    Thread(delete_winning_numbers()).start()
+    Thread(delete_winning_numbers_combinations()).start()
 
-        win_nums_data = get_winning_numbers(url)
+    win_nums_data = get_winning_numbers(url)
 
-        Thread(load_winning_numbers(win_nums_data)).start()
-        Thread(load_winning_numbers_combinations(win_nums_data)).start()
+    Thread(load_winning_numbers(win_nums_data)).start()
+    Thread(load_winning_numbers_combinations(win_nums_data)).start()
 
-        time.sleep(60*60*24)

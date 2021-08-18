@@ -39,6 +39,7 @@
 
 - get with number search example
     http://127.0.0.1:8000/api/mega-millions/winning-numbers-combinations/?page=1&numbers=2,%2036
+    https://lotto-combo-api.herokuapp.com/api/mega-millions/winning-numbers-combinations/?page=1&numbers=2,%2036
 
 - Heroku deployment steps
 0. heroku
@@ -88,9 +89,12 @@
 
 9. heroku
     git push heroku main
-    heroku run python manage.py runscript tasks to add data
+    heroku run python manage.py runscript tasks # to add data
     heroku open
     
 10. schedule on heroku
-    heroku addons # to see addons     
+    heroku addons # to see addons
+
+Reference
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment     
     

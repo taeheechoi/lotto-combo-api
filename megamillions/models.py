@@ -18,6 +18,8 @@ class MegaMillions(models.Model):
 class WinningNumbersCombination(models.Model):
     winning_numbers_combination = models.CharField(max_length=20, null=False, blank=False)
     winning_numbers_combination_occurrence = models.IntegerField(null=False, blank=False)
+    number_of_draws = models.IntegerField(null=False, blank=False)
+    possibility = models.DecimalField(decimal_places=2, max_digits=5, null=True, blank=True)
 
     def __str__(self):
         return f'winning_numbers_combination:{self.winning_numbers_combination} winning_numbers_combination_occurrence:{self.winning_numbers_combination_occurrence}'
