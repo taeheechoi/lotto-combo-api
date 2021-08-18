@@ -49,17 +49,25 @@ def load_winning_numbers(win_nums_data: list) -> None:
 
 
 def load_winning_numbers_combinations(win_nums_data: list) -> None:
+    top_pick_numbers_length = 2 #('01, '10')
+    top_pick_min_occurrence = 12
 
     win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
         (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
 
-    win_nums_combos_list, number_of_draws = winning_numbers_combinations(win_nums_list)
+    win_nums_combos_list, number_of_draws = winning_numbers_combinations(
+        win_nums_list)
 
     win_nums_occurs = winning_numbers_combinations_occurrences(
         win_nums_combos_list)
 
-    win_nums_occurs_data = [WinningNumbersCombination(winning_numbers_combination=', '.join(
-        k), winning_numbers_combination_occurrence=v, number_of_draws=number_of_draws, possibility=v/number_of_draws*100) for k, v in win_nums_occurs.items() if v >= 2]
+    win_nums_occurs_data = [WinningNumbersCombination(
+                            winning_numbers_combination=', '.join(k), 
+                            winning_numbers_combination_occurrence=v, 
+                            number_of_draws=number_of_draws, 
+                            possibility=v/number_of_draws*100,
+                            top_pick=True if len(k) >= top_pick_numbers_length and v >= top_pick_min_occurrence  else False # 
+                            ) for k, v in win_nums_occurs.items() if v >= 2]
 
     WinningNumbersCombination.objects.bulk_create(win_nums_occurs_data)
 
@@ -78,4 +86,3 @@ def run() -> None:
 
     Thread(load_winning_numbers(win_nums_data)).start()
     Thread(load_winning_numbers_combinations(win_nums_data)).start()
-
