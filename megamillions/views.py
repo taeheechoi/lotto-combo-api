@@ -20,9 +20,10 @@ class WinningNumbersCombonationList(ListAPIView):
     def get_queryset(self):
         queryset = WinningNumbersCombination.objects.all().order_by('-winning_numbers_combination_occurrence')
         numbers = self.request.query_params.get('numbers')
-        quick_pick = self.request.query_params.get('quick-pick')
+        top_occurrence = self.request.query_params.get('top_occurrence')
+        
         if numbers is not None:
             queryset = queryset.filter(winning_numbers_combination__icontains=numbers).order_by('-winning_numbers_combination_occurrence')
-        if quick_pick is not None:
-            queryset = queryset.filter(quick_pick=quick_pick).order_by('-winning_numbers_combination_occurrence')
+        if top_occurrence is not None:
+            queryset = queryset.filter(top_occurrence=top_occurrence).order_by('-winning_numbers_combination_occurrence')
         return queryset
