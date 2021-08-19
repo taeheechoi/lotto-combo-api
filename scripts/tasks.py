@@ -49,8 +49,8 @@ def load_winning_numbers(win_nums_data: list) -> None:
 
 
 def load_winning_numbers_combinations(win_nums_data: list) -> None:
-    quick_pick_numbers_length = 2 #('01, '10')
-    quick_pick_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
+    top_occurrence_numbers_length = 2 #('01, '10')
+    top_occurrence_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
 
     win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
         (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
@@ -66,7 +66,7 @@ def load_winning_numbers_combinations(win_nums_data: list) -> None:
                             winning_numbers_combination_occurrence=v, 
                             number_of_draws=number_of_draws, 
                             possibility=v/number_of_draws*100,
-                            quick_pick=True if len(k) >= quick_pick_numbers_length and v >= quick_pick_min_occurrence  else False 
+                            top_occurrence=True if len(k) >= top_occurrence_numbers_length and v >= top_occurrence_min_occurrence  else False 
                             ) for k, v in win_nums_occurs.items() if v >= 2]
 
     WinningNumbersCombination.objects.bulk_create(win_nums_occurs_data)
