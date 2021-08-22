@@ -1,6 +1,6 @@
 from django.db.models import fields
 from rest_framework.serializers import ModelSerializer
-from .models import MegaMillions, WinningNumbersCombination
+from .models import MegaMillions, Powerball, WinningNumbersCombination
 
 
 class MegaMillionsSerializer(ModelSerializer):
@@ -9,6 +9,11 @@ class MegaMillionsSerializer(ModelSerializer):
         # fields = '__all__'
         exclude = ('id',)
 
+class PowerballSerializer(ModelSerializer):
+    class Meta:
+        model = Powerball
+        # fields = '__all__'
+        exclude = ('id',)
 
 class WinningNumbersCombinationSerializer(ModelSerializer):
     class Meta:

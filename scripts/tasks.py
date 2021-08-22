@@ -2,16 +2,30 @@ import json
 from itertools import combinations
 from threading import Thread
 import time
+from django.db import models
 from typing import Tuple
 
 import requests
-from megamillions.models import MegaMillions, WinningNumbersCombination
+from megamillions.models import MegaMillions, Powerball, WinningNumbersCombination
 
 url = 'https://data.ny.gov/api/views/5xaw-6ayf/rows.json?accessType=DOWNLOAD'
 
+game_info = {
+    'MEGAMILLIONS': {
+        'url': 'https://data.ny.gov/api/views/5xaw-6ayf/rows.json?accessType=DOWNLOAD',
+        'model': MegaMillions,
+ 
+    },
+    'POWERBALL': {
+        'url': 'https://data.ny.gov/api/views/d6yy-54nr/rows.json?accessType=DOWNLOAD',
+        'model': Powerball
+    },
+}
 
-def delete_winning_numbers() -> None:
-    MegaMillions.objects.all().delete()
+def delete_winning_numbers(model: models) -> None:
+    # MegaMillions.objects.all().delete()
+    # Powerball.objects.all().delete()
+    model.objects.all().delete()
 
 
 def delete_winning_numbers_combinations() -> None:
@@ -40,20 +54,30 @@ def winning_numbers_combinations(win_nums_list: list) -> Tuple[list, int]:
     return win_nums_combos_list, number_of_draws
 
 
-def load_winning_numbers(win_nums_data: list) -> None:
+def load_winning_numbers(game: str, model: models, win_nums_data: list) -> None:
     # 2013-04-30T00:00:00
 
-    load_data = [MegaMillions(draw_date=item[8], winning_numbers=item[9],
-                              mega_ball=item[10], multiplier=item[11], number_of_draws=len(win_nums_data)) for item in win_nums_data]
-    MegaMillions.objects.bulk_create(load_data)
+    if game == 'MEGAMILLIONS':
+        load_data = [model(draw_date=item[8], winning_numbers=item[9],
+                                ball=item[10], multiplier=item[-1], number_of_draws=len(win_nums_data)) for item in win_nums_data]
+    if game == 'POWERBALL':
+        load_data = [model(draw_date=item[8], winning_numbers=item[9][:-2],
+                                ball=item[9][-2:], multiplier=item[-1], number_of_draws=len(win_nums_data)) for item in win_nums_data]
+
+    model.objects.bulk_create(load_data)
 
 
-def load_winning_numbers_combinations(win_nums_data: list) -> None:
+def load_winning_numbers_combinations(game: str, win_nums_data: list) -> None:
     top_occurrence_numbers_length = 2 #('01, '10')
     top_occurrence_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
 
-    win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
-        (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
+    if game == 'MEGAMILLIONS':
+        win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
+            (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
+    if game == 'POWERBALL':
+        win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
+            (*item[9][:-2].split(' '), f'*{item[9][-2:]}') for item in win_nums_data]
+
 
     win_nums_combos_list, number_of_draws = winning_numbers_combinations(
         win_nums_list)
@@ -62,6 +86,7 @@ def load_winning_numbers_combinations(win_nums_data: list) -> None:
         win_nums_combos_list)
 
     win_nums_occurs_data = [WinningNumbersCombination(
+                            game=game,
                             winning_numbers_combination=', '.join(k), 
                             winning_numbers_combination_occurrence=v, 
                             number_of_draws=number_of_draws, 
@@ -79,10 +104,15 @@ def get_winning_numbers(url: str) -> list:
 
 
 def run() -> None:
-    Thread(delete_winning_numbers()).start()
+   
     Thread(delete_winning_numbers_combinations()).start()
 
-    win_nums_data = get_winning_numbers(url)
+    games = ['MEGAMILLIONS', 'POWERBALL']
+    for game in games:
+        Thread(delete_winning_numbers(game_info[game]['model'])).start()
+        win_nums_data = get_winning_numbers(game_info[game]['url'])
+        
+        Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
+        Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
 
-    Thread(load_winning_numbers(win_nums_data)).start()
-    Thread(load_winning_numbers_combinations(win_nums_data)).start()
+    
