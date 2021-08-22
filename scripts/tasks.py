@@ -108,12 +108,12 @@ def run() -> None:
    
     Thread(delete_winning_numbers_combinations()).start()
 
-    # games = ['MEGAMILLIONS', 'POWERBALL']
-    # for game in games:
-    #     Thread(delete_winning_numbers(game_info[game]['model'])).start()
-    #     win_nums_data = get_winning_numbers(game_info[game]['url'])
+    games = ['MEGAMILLIONS', 'POWERBALL']
+    for game in games:
+        Thread(delete_winning_numbers(game_info[game]['model'])).start()
+        win_nums_data = get_winning_numbers(game_info[game]['url'])
         
-    #     Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
-    #     Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
+        Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
+        Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
 
     
