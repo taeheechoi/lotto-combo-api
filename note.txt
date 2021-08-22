@@ -102,3 +102,9 @@
 Reference
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment     
     
+
+Postgresql on Heroku
+begin;
+set transaction read write;
+delete from lottery_winningnumberscombination
+COMMIT;  
