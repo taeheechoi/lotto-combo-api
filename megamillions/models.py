@@ -38,7 +38,7 @@ class WinningNumbersCombination(models.Model):
 
     game = models.CharField(choices=GAME_OPTIONS, max_length=50)
     winning_numbers_combination = models.CharField(
-        max_length=20, null=False, blank=False)
+        max_length=50, null=False, blank=False)
     winning_numbers_combination_occurrence = models.IntegerField(
         null=False, blank=False)
     number_of_draws = models.IntegerField(null=False, blank=False)
