@@ -69,7 +69,7 @@ def load_winning_numbers(game: str, model: models, win_nums_data: list) -> None:
 
 def load_winning_numbers_combinations(game: str, win_nums_data: list) -> None:
     top_occurrence_numbers_length = 2 #('01, '10')
-    top_occurrence_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
+    top_occurrence_min_occurrence = 9 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
     min_occurrence = 6 # added due to limit of free version less than 10k rows
     
     if game == 'megamillions':
