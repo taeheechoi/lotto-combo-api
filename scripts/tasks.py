@@ -77,9 +77,9 @@ def load_winning_numbers_combinations(game: str, win_nums_data: list) -> None:
             (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
     if game == 'powerball':
         win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
-            (*item[9][:-2].split(' '), f'*{item[9][-2:]}') for item in win_nums_data]
+            (*item[9].split(' ')[:-2], f'*{item[9][-2:]}') for item in win_nums_data]
 
-
+  
     win_nums_combos_list, number_of_draws = winning_numbers_combinations(
         win_nums_list)
 
@@ -112,7 +112,7 @@ def run() -> None:
     for game in games:
         Thread(delete_winning_numbers(game_info[game]['model'])).start()
         win_nums_data = get_winning_numbers(game_info[game]['url'])
-        
+
         Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
         Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
 
