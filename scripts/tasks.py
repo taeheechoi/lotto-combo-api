@@ -70,7 +70,8 @@ def load_winning_numbers(game: str, model: models, win_nums_data: list) -> None:
 def load_winning_numbers_combinations(game: str, win_nums_data: list) -> None:
     top_occurrence_numbers_length = 2 #('01, '10')
     top_occurrence_min_occurrence = 18 # about 50 records = pagination size. Get records once then will be shuffled to generate numbers
-
+    min_occurrence = 6 # added due to limit of free version less than 10k rows
+    
     if game == 'MEGAMILLIONS':
         win_nums_list = [  # ('01', '09', '17', '27', '34', '*24') * mega number
             (*item[9].split(' '), f'*{item[10]}') for item in win_nums_data]
@@ -92,7 +93,7 @@ def load_winning_numbers_combinations(game: str, win_nums_data: list) -> None:
                             number_of_draws=number_of_draws, 
                             possibility=v/number_of_draws*100,
                             top_occurrence=True if len(k) >= top_occurrence_numbers_length and v >= top_occurrence_min_occurrence  else False 
-                            ) for k, v in win_nums_occurs.items() if v >= 2]
+                            ) for k, v in win_nums_occurs.items() if v >= min_occurrence] # v >=2, occured more than 2 times
 
     WinningNumbersCombination.objects.bulk_create(win_nums_occurs_data)
 
@@ -107,12 +108,12 @@ def run() -> None:
    
     Thread(delete_winning_numbers_combinations()).start()
 
-    games = ['MEGAMILLIONS', 'POWERBALL']
-    for game in games:
-        Thread(delete_winning_numbers(game_info[game]['model'])).start()
-        win_nums_data = get_winning_numbers(game_info[game]['url'])
+    # games = ['MEGAMILLIONS', 'POWERBALL']
+    # for game in games:
+    #     Thread(delete_winning_numbers(game_info[game]['model'])).start()
+    #     win_nums_data = get_winning_numbers(game_info[game]['url'])
         
-        Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
-        Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
+    #     Thread(load_winning_numbers(game, game_info[game]['model'], win_nums_data)).start()
+    #     Thread(load_winning_numbers_combinations(game, win_nums_data)).start()
 
     
