@@ -33,8 +33,8 @@ class Powerball(models.Model):
 
 class WinningNumbersCombination(models.Model):
 
-    GAME_OPTIONS = [('MEGAMILLIONS', 'MEGAMILLIONS'),
-                    ('POWERBALL', 'POWERBALL')]
+    GAME_OPTIONS = [('megamillions', 'megamillions'),
+                    ('powerball', 'powerball')]
 
     game = models.CharField(choices=GAME_OPTIONS, max_length=50)
     winning_numbers_combination = models.CharField(
