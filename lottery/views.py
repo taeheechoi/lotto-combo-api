@@ -1,4 +1,4 @@
-from megamillions.serializers import MegaMillionsSerializer
+from lottery.serializers import MegaMillionsSerializer
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from .serializers import MegaMillionsSerializer, PowerballSerializer, WinningNumbersCombinationSerializer
