@@ -108,7 +108,7 @@ def run() -> None:
    
     Thread(delete_winning_numbers_combinations()).start()
 
-    games = ['MEGAMILLIONS', 'POWERBALL']
+    games = ['megamillions', 'powerball']
     for game in games:
         Thread(delete_winning_numbers(game_info[game]['model'])).start()
         win_nums_data = get_winning_numbers(game_info[game]['url'])
