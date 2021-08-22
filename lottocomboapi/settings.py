@@ -148,7 +148,8 @@ REST_FRAMEWORK = {
 # CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
-    'https://lotto-combo-app.herokuapp.com/winning-numbers'
+    'http://localhost:3000',
+    'https://lotto-combo-app.herokuapp.com'
 ]
 
 CSRF_COOKIE_SECURE=True
