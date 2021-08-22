@@ -6,7 +6,7 @@ from django.db import models
 from typing import Tuple
 
 import requests
-from megamillions.models import MegaMillions, Powerball, WinningNumbersCombination
+from lottery.models import MegaMillions, Powerball, WinningNumbersCombination
 
 url = 'https://data.ny.gov/api/views/5xaw-6ayf/rows.json?accessType=DOWNLOAD'
 
